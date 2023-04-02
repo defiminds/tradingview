@@ -1,0 +1,66 @@
+//c2V2ZW4K
+//OpenAI
+//@version=5
+strategy('Ribbon Buy/Sell Strategy', overlay=true)
+
+// Define input parameters
+fast_length = input(title='Fast Length', defval=5)
+slow_length = input(title='Slow Length', defval=20)
+
+// Calculate Moving Average Ribbon
+ema1 = ta.ema(close, fast_length)
+ema2 = ta.ema(close, 2 * fast_length)
+ema3 = ta.ema(close, 3 * fast_length)
+ema4 = ta.ema(close, 4 * fast_length)
+ema5 = ta.ema(close, 5 * fast_length)
+ema6 = ta.ema(close, 6 * fast_length)
+ema7 = ta.ema(close, 7 * fast_length)
+ema8 = ta.ema(close, 8 * fast_length)
+ema9 = ta.ema(close, 9 * fast_length)
+ema10 = ta.ema(close, 10 * fast_length)
+ema11 = ta.ema(close, 11 * fast_length)
+ema12 = ta.ema(close, 12 * fast_length)
+ema13 = ta.ema(close, 13 * fast_length)
+ema14 = ta.ema(close, 14 * fast_length)
+ema15 = ta.ema(close, 15 * fast_length)
+ema16 = ta.ema(close, 16 * fast_length)
+ema17 = ta.ema(close, 17 * fast_length)
+ema18 = ta.ema(close, 18 * fast_length)
+ema19 = ta.ema(close, 19 * fast_length)
+ema20 = ta.ema(close, slow_length)
+
+// Generate buy and sell signals based on Ribbon
+buy_signal = ta.crossover(ema1, ema20)
+sell_signal = ta.crossunder(ema1, ema20)
+
+// Execute trades based on signals
+if buy_signal
+    strategy.entry('Buy', strategy.long)
+else if sell_signal
+    strategy.entry('Sell', strategy.short)
+
+// Plot Ribbon
+plot(ema1, color=color.new(color.yellow, 0), title='EMA1')
+plot(ema2, color=color.new(color.fuchsia, 0), title='EMA2')
+plot(ema3, color=color.new(color.lime, 0), title='EMA3')
+plot(ema4, color=color.new(color.aqua, 0), title='EMA4')
+plot(ema5, color=color.new(color.orange, 0), title='EMA5')
+plot(ema6, color=color.new(color.red, 0), title='EMA6')
+plot(ema7, color=color.new(color.blue, 0), title='EMA7')
+plot(ema8, color=color.new(color.purple, 0), title='EMA8')
+plot(ema9, color=color.new(color.green, 0), title='EMA9')
+plot(ema10, color=color.new(color.maroon, 0), title='EMA10')
+plot(ema11, color=color.new(color.teal, 0), title='EMA11')
+plot(ema12, color=color.new(color.gray, 0), title='EMA12')
+plot(ema13, color=color.new(color.silver, 0), title='EMA13')
+plot(ema14, color=color.new(color.olive, 0), title='EMA14')
+plot(ema15, color=color.new(color.yellow, 0), title='EMA15')
+plot(ema16, color=color.new(color.fuchsia, 0), title='EMA16')
+plot(ema17, color=color.new(color.lime, 0), title='EMA17')
+plot(ema18, color=color.new(color.aqua, 0), title='EMA18')
+plot(ema19, color=color.new(color.orange, 0), title='EMA19')
+plot(ema20, color=color.new(color.red, 0), title='EMA20')
+
+// Plot buy and sell signals
+plotshape(buy_signal, style=shape.triangleup, location=location.belowbar, color=color.new(color.green, 0), size=size.small)
+plotshape(sell_signal, style=shape.triangledown, location=location.abovebar, color=color.new(color.red, 0), size=size.small)
