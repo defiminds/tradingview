@@ -1,0 +1,47 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © c2V2ZW4K
+// © StalexBot
+//OpenAI
+//@version=5
+strategy('Double Tilson - Strategy', overlay=true)
+
+len = input(title='Length', defval=14)
+factor = input(title='Factor', defval=2.0)
+
+ema1 = ta.ema(open, len)
+ema2 = ta.ema(ema1, len)
+ema3 = ta.ema(ema2, len)
+ema4 = ta.ema(ema3, len)
+
+tilson = ema4 + (ema4 - ema3) * factor
+
+plot(tilson, color=color.new(color.blue, 0), linewidth=2)
+
+b = input(title='Factor', defval=0.7)
+c1 = -b * b * b
+c2 = 3 * b * b + 3 * b * b * b
+c3 = -6 * b * b - 3 * b - 3 * b * b * b
+c4 = 1 + 3 * b + b * b * b + 3 * b * b
+//T3 calcs end
+
+t3(len) =>
+    c1 * ta.ema(ta.ema(ta.ema(ta.ema(ta.ema(ta.ema(open, len), len), len), len), len), len) + c2 * ta.ema(ta.ema(ta.ema(ta.ema(ta.ema(open, len), len), len), len), len) + c3 * ta.ema(ta.ema(ta.ema(ta.ema(open, len), len), len), len) + c4 * ta.ema(ta.ema(ta.ema(open, len), len), len)
+
+t3plot = t3(input(title='Period', defval=35))
+linewidth = input(title='Linewidth', defval=1)
+colorsetting = input(title='Solid color', defval=false)
+
+plot(t3plot, color=colorsetting ? color.aqua : t3plot > t3plot[1] ? color.green : color.red, linewidth=linewidth)
+
+// Generate buy signal when Tillson T3 crosses above LVWMA
+buy_signal = ta.crossover(t3plot, tilson)
+
+// Generate sell signal when Tillson T3 crosses below LVWMA
+sell_signal = ta.crossunder(t3plot, tilson)
+
+// Execute buy and sell orders
+if buy_signal
+    strategy.entry('Buy', strategy.long)
+
+if sell_signal
+    strategy.entry('Sell', strategy.short)
