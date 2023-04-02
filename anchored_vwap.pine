@@ -1,0 +1,32 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © c2V2ZW4K
+//@version=5
+strategy("Anchored VWAP Strategy for Bitcoin", overlay=true)
+
+// Define the length of the VWAP
+len = input.int(121, "Length", minval=1)
+
+// Define the start time of the VWAP
+start = input.time(timestamp("01 Jan 2022 00:00"))
+
+// Calculate the anchored VWAP
+anchored_vwap = request.security(syminfo.tickerid, "D", ta.vwma(close, len), barmerge.gaps_off, barmerge.lookahead_on, start)
+
+// Plot the anchored VWAP
+plot(anchored_vwap, "Anchored VWAP", color=color.red)
+
+// Define the entry conditions
+long_condition = ta.crossover(close, anchored_vwap)
+short_condition = ta.crossunder(close, anchored_vwap)
+
+// Enter long or short position when the entry conditions are met
+if (long_condition)
+    strategy.entry("Buy", strategy.long)
+if (short_condition)
+    strategy.entry("Sell", strategy.short)
+
+// Exit the position when the price crosses the anchored VWAP in the opposite direction
+if (strategy.position_size > 0 and ta.crossunder(close, anchored_vwap))
+    strategy.close("Buy")
+if (strategy.position_size < 0 and ta.crossover(close, anchored_vwap))
+    strategy.close("Sell")
