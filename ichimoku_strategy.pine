@@ -1,0 +1,30 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © c2V2ZW4K
+//OpenAI
+//@version=5
+strategy('Ichimoku Cloud Strategy', overlay=true)
+
+// Define inputs
+tenkanLength = input(title='Tenkan-sen Length', defval=9)
+kijunLength = input(title='Kijun-sen Length', defval=26)
+senkouLength = input(title='Senkou Span B Length', defval=52)
+
+// Define Ichimoku Cloud
+conversionLine = ta.sma((high + low) / 2, tenkanLength)
+baseLine = ta.sma((high + low) / 2, kijunLength)
+leadLine1 = math.avg(conversionLine, baseLine)
+leadLine2 = ta.sma((high + low + leadLine1 + leadLine1) / 4, senkouLength)
+
+// Plot Ichimoku Cloud
+plot(leadLine1, color=color.new(color.blue, 0), title='Tenkan-sen')
+plot(leadLine2, color=color.new(color.orange, 0), title='Kijun-sen')
+
+// Define Buy and Sell Conditions
+buySignal = ta.crossover(conversionLine, baseLine) and close > leadLine2
+sellSignal = ta.crossunder(conversionLine, baseLine) and close < leadLine2
+
+// Execute Trades
+if buySignal
+    strategy.entry('Buy', strategy.long)
+if sellSignal
+    strategy.entry('Sell', strategy.short)
