@@ -1,0 +1,57 @@
+// This source code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © c2V2ZW4K
+//@version=4
+strategy("DEMA and TEMA Strategy", overlay=true)
+
+// Inputs
+len = input(50, title="Length")
+demaMult = input(2.0, title="DEMA Multiplier")
+temaMult = input(5, title="TEMA Multiplier")
+stoploss = input(10, title="Stop Loss Percentage")
+takeprofit = input(10, title="Take Profit Percentage")
+
+// DEMA and TEMA calculations
+dema = 2 * ema(close, len) - ema(ema(close, len), len)
+tema = 3 * ema(close, len) - 3 * ema(ema(close, len), len) + ema(ema(ema(close, len), len), len)
+
+plot(dema,"DEMA",color=color.blue,linewidth = 1, style = plot.style_line)
+plot(tema,"TEMA",color=color.orange,linewidth = 1, style = plot.style_line)
+
+
+// Buy signal
+//buySignal = crossover(dema * demaMult, tema * temaMult)
+buySignal = crossunder(dema, tema)
+
+// Sell signal
+//sellSignal = crossunder(dema * demaMult, tema * temaMult)
+sellSignal = crossover(dema, tema)
+
+// Stop Loss and Take Profit
+//stopLoss = strategy.position_avg_price * (1 - stoploss)
+//takeProfit = strategy.position_avg_price * (1 + takeprofit)
+
+// Enter Long
+if (buySignal)
+    strategy.entry("Long", strategy.long)
+
+// Exit Long
+//if (sellSignal)
+//    strategy.close("Long")
+
+// Stop Loss and Take Profit Long
+//if (strategy.position_size > 0)
+ //   strategy.exit("Long Stop Loss", "Long", stop=stopLoss)
+ //   strategy.exit("Long Take Profit", "Long", limit=takeProfit)
+
+// Enter Short
+if (sellSignal)
+    strategy.entry("Short", strategy.short)
+
+// Exit Short
+//if (buySignal)
+ //   strategy.close("Short")
+
+// Stop Loss and Take Profit Short
+//if (strategy.position_size < 0)
+//    strategy.exit("Short Stop Loss", "Short", stop=stopLoss)
+//    strategy.exit("Short Take Profit", "Short", limit=takeProfit)
